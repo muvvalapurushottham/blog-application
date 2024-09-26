@@ -2,12 +2,6 @@ const multer = require('multer');
 const { Blog } = require('../models/blog');
 const Comment = require('../models/comment');
 
-async function handleAddNewBlog(req, res) {
-  return res.render('addBlog', {
-    user: req.user,
-  });
-}
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, `./public/uploads/`);
@@ -20,10 +14,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
+async function handleAddNewBlog(req, res) {
+  return res.render('addBlog', {
+    user: req.user,
+  });
+}
+
 async function handleAddBlog(req, res) {
 
-
   const { title, body } = req.body;
+
+  if(!title || !body || !req.file){
+    req.render('addBlog', {
+      error: "All fields are required"
+    })
+  }
+
   const blog = await Blog.create({
     title,
     body,
@@ -55,7 +61,6 @@ async function handleComment (req, res) {
     blogId: req.params.blogId,
     createdBy: req.user._id,
   });
-  console.log(comment, 'comment');
   return res.redirect(`/blog/${req.params.blogId}`);
 }
 

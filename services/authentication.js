@@ -5,6 +5,7 @@ const secretKey = "I@mB@tM@an!";
 function createTokenForUser(user) {
     const payload = {
         _id: user._id,
+        fullName: user.fullName,
         email: user.email,
         profileImageUrl: user.profileImageUrl,
         role: user.role,
@@ -20,7 +21,7 @@ function validateUserToken(token) {
         return null;
     }
 
-    const payload = jwt.verify(token, secretKey);
+    const payload = jwt.verify(token, secretKey,{ expiresIn: "30m"});
     return payload; 
 }
 

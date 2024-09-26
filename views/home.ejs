@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <%- include('./partials/head') %>
-        <title>Home</title>
-    </head>
-    <body>
-        <%- include('./partials/navbar') %>
-        <div class="container mt-3">
-            <div class="row row-cols-3">
+<head>
+    <%- include('./partials/head') %>
+    <title>Home</title>
+    <style>
+        .card {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img-top {
+            object-fit: cover;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/navbar') %>
+
+    <div class="container-fluid mt-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
             <% blogs.forEach(blog => { %>
-                <div class="col">
-                <div class="card col" style="width: 18rem;">
-                    <img src="<%= blog.coverImageUrl %>" class="card-img-top" >
-                    <div class="card-body">
-                      <h5 class="card-title"><%= blog.title %></h5>
-                      <a href="/blog/<%= blog._id %>" class="btn btn-primary">Read</a>
+                <div class="col mb-4">
+                    <div class="card h-100" style="width: 100%;">
+                        <img src="<%= blog.coverImageUrl %>" class="card-img-top" alt="<%= blog.title %>">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title"><%= blog.title %></h5>
+                            <a href="/blog/<%= blog._id %>" class="btn btn-primary mt-auto btn-block">Read</a>
+                        </div>
                     </div>
-                  </div>
                 </div>
             <% }) %>
         </div>
-        </div>
-        <%- include('./partials/script') %>
-    </body>
+    </div>
+
+    <%- include('./partials/script') %>
+</body>
 </html>

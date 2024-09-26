@@ -1,30 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <%- include('./partials/head') %>
-        <title>Add New Blog</title>
-    </head>
-    <body>
-        <%- include('./partials/navbar') %>
-        <div class="container mt-3">
-            <form action = "/blog/" method = "post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="coverImage" class="form-label">Cover Image</label>
-                    <input type="file" class="form-control" id="coverImage" name="coverImage" aria-describedby="coverImage">
-                </div>
-                <div class="mb-3">
-                    <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" aria-describedby="title">
-                </div>
-                <div class="mb-3">
-                    <label for="body" class="form-label">Body</label>
-                    <textarea class="form-control" id="body" name="body" aria-label="body"></textarea>
-                </div>
-                <div class="mb-3">
-                    <button class="btn btn-primary" type="submit"> Submit </button>
-                </div>
-            </form>
-        </div>
-        <%- include('./partials/script') %>
-    </body>
+<head>
+    <%- include('./partials/head') %>
+    <title>Add New Blog</title>
+    <style>
+        /* Custom styles for the form and textarea */
+        .form-control {
+            border-radius: 0.25rem;
+        }
+
+        textarea.form-control {
+            resize: vertical; /* Allows vertical resizing */
+            min-height: 150px; /* Minimum height for the textarea */
+            max-height: 500px; /* Maximum height for the textarea */
+        }
+
+        .container {
+            max-width: 800px; /* Limit the width of the container */
+        }
+
+        .btn-primary {
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/navbar') %>
+    <div class="container mt-3">
+        <h2 class="mb-4">Add New Blog</h2>
+        <form action="/blog/" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="coverImage" class="form-label">Cover Image</label>
+                <input type="file" class="form-control" id="coverImage" name="coverImage" aria-describedby="coverImage">
+            </div>
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" aria-describedby="title">
+            </div>
+            <div class="mb-3">
+                <label for="body" class="form-label">Body</label>
+                <textarea class="form-control" id="body" name="body" aria-label="body"></textarea>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+    <%- include('./partials/script') %>
+</body>
 </html>

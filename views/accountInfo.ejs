@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./partials/head') %>
+        <title>Edit Profile</title>
+    </head>
+    <body>
+        <%- include('./partials/navbar') %>
+        <div class="container mt-4">
+          <h2 class="mb-4">Account Info</h2>
+      
+          <div id="account-info" class="mb-4">
+
+            <div class="mb-3">
+                <label class="form-label">Profile Image:</label>
+                <div>
+                  <img 
+                    src="<%= locals.user.profileImageUrl || 'default-image-url.jpg' %>" 
+                    class="img-thumbnail rounded-circle" 
+                    alt="Profile Image" 
+                    style="width: 60px; height: 60px;">
+                </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Full Name:</label>
+              <span id="display-fullName"><%= locals.user.fullName %></span>
+            </div>
+      
+            <div class="mb-3">
+              <label class="form-label">Email:</label>
+              <span id="display-email"><%= locals.user.email %></span>
+            </div>
+      
+            <button id="edit-button" class="btn btn-secondary">Edit</button>
+          </div>
+      
+          <form id="edit-form" action="/user/accountInfo" method="post" enctype="multipart/form-data" style="display: none;">
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="fullName" name="fullName" value="<%= locals.user.fullName %>" required>
+            </div>
+      
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" value="<%= locals.user.email %>" required>
+            </div>
+      
+            <div class="mb-3">
+              <label for="profileImage" class="form-label">Profile Image</label>
+              <input type="file" class="form-control" id="profileImage" name="profileImage" aria-describedby="profileImage">
+            </div>
+      
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+      
+            <button type="submit" class="btn btn-primary">Update Info</button>
+            <button type="button" id="cancel-button" class="btn btn-secondary">Cancel</button>
+          </form>
+        </div>
+        <%- include('./partials/script') %>
+      
+        <script>
+          document.getElementById('edit-button').addEventListener('click', function() {
+            document.getElementById('account-info').style.display = 'none';
+            document.getElementById('edit-form').style.display = 'block';
+          });
+      
+          document.getElementById('cancel-button').addEventListener('click', function() {
+            document.getElementById('edit-form').style.display = 'none';
+            document.getElementById('account-info').style.display = 'block';
+          });
+        </script>
+      </body>
+      
+</html>

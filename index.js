@@ -32,11 +32,21 @@ connectMongodb('mongodb://127.0.0.1:27017/blOG').then(() => {
 })
 
 app.get('/', async (req, res) => {
-    const allBlogs = await Blog.find({}).sort({"createdAt": -1});
-    res.render('home', {
-        user: req.user,
-        blogs: allBlogs,
-    });
+    
+    try {
+        const allBlogs = await Blog.find({}).sort({"createdAt": -1});
+
+        if(!allBlogs || allBlogs.length === 0){
+            console.log("No Blogs found");
+        }
+        res.render('home', {
+            user: req.user,
+            blogs: allBlogs,
+        });
+    } catch (error) {
+        console.error(err);
+        res.status(500).send("Error retrieving blogs");
+    }
 })
 
 app.use('/user', userRouter);
