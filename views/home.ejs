@@ -1,43 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <%- include('./partials/head') %>
     <title>Home</title>
     <style>
-        .card {
-            transition: transform 0.2s ease-in-out;
-        }
+      body {
+        background-color: #f8f9fa;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+      }
 
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+      .container {
+        flex-grow: 1;
+        margin-top: 30px;
+      }
 
-        .card-img-top {
-            object-fit: cover;
-            height: 200px;
-        }
+      .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        background-color: #fff;
+      }
+
+      .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-img-top {
+        object-fit: cover;
+        height: 180px;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .card-body {
+        padding: 15px;
+      }
+
+      .card-title {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #343a40;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 25px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+
+      .g-4 > .col {
+        display: flex;
+      }
+
+      .h-100 {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .container-fluid {
+        padding: 0 10px;
+      }
+
+      footer {
+        background-color: #f8f9fa;
+        padding: 10px 0;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+        width: 100%;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <%- include('./partials/navbar') %>
 
-    <div class="container-fluid mt-4">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-            <% blogs.forEach(blog => { %>
-                <div class="col mb-4">
-                    <div class="card h-100" style="width: 100%;">
-                        <img src="<%= blog.coverImageUrl %>" class="card-img-top" alt="<%= blog.title %>">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title"><%= blog.title %></h5>
-                            <a href="/blog/<%= blog._id %>" class="btn btn-primary mt-auto btn-block">Read</a>
-                        </div>
-                    </div>
-                </div>
-            <% }) %>
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        <% blogs.forEach(blog => { %>
+        <div class="col mb-4">
+          <div class="card h-100">
+            <img
+              src="<%= blog.coverImageUrl %>"
+              class="card-img-top"
+              alt="<%= blog.title %>"
+            />
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title"><%= blog.title %></h5>
+              <a href="/blog/<%= blog._id %>" class="btn btn-primary mt-auto"
+                >Read More</a
+              >
+            </div>
+          </div>
         </div>
+        <% }) %>
+      </div>
     </div>
 
-    <%- include('./partials/script') %>
-</body>
+    <%- include('./partials/script') %> <%- include('./partials/footer') %>
+  </body>
 </html>

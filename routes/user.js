@@ -1,20 +1,34 @@
-const { Router} = require('express');
+const { Router } = require("express");
 
-const { handleSignin, handleSignup, handleCreateUser, handleUserLogin, handleUserLogout, handleAccountInfo, handleEditAccountInfo, uploadMiddleware} = require('../controllers/user');
+const {
+  handleSignin,
+  handleSignup,
+  handleCreateUser,
+  handleUserLogin,
+  handleUserLogout,
+  handleAccountInfo,
+  handleEditAccountInfo,
+  uploadMiddleware,
+  handleUserBlog,
+} = require("../controllers/user");
 const router = Router();
 
-router.get('/signin', handleSignin);
+router.get("/signin", handleSignin);
 
-router.get('/signup', handleSignup);
+router.get("/signup", handleSignup);
 
-router.get('/logout', handleUserLogout);
+router.get("/logout", handleUserLogout);
 
-router.get('/accountInfo', handleAccountInfo);
+router.get("/accountInfo", handleAccountInfo);
 
-router.post('/signup', handleCreateUser);
+router.get("/accountInfo", handleAccountInfo);
 
-router.post('/signin', handleUserLogin);
+router.get("/userBlogs", handleUserBlog);
 
-router.post('/accountInfo', uploadMiddleware, handleEditAccountInfo);
+router.post("/signup", handleCreateUser);
+
+router.post("/signin", handleUserLogin);
+
+router.post("/accountInfo", uploadMiddleware, handleEditAccountInfo);
 
 module.exports = router;
