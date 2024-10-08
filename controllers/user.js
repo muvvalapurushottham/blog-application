@@ -54,7 +54,6 @@ async function handleCreateUser(req, res) {
 
     return res
       .status(201)
-      .json({ messag: "User created successfully" })
       .redirect("/");
   } catch (error) {
     console.error("Error creating user: ", error);
