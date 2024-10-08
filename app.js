@@ -46,7 +46,7 @@ app.get("/", async (req, res) => {
       blogs: allBlogs,
     });
   } catch (error) {
-    console.error(err);
+    console.error(error);
     res.status(500).send("Error retrieving blogs");
   }
 });
