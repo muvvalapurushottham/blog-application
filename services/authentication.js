@@ -11,7 +11,7 @@ function createTokenForUser(user) {
     role: user.role,
   };
 
-  const token = jwt.sign(payload, secretKey);
+  const token = jwt.sign(payload, secretKey, { expiresIn: "60m" });
   return token;
 }
 
@@ -20,8 +20,12 @@ function validateUserToken(token) {
     return null;
   }
 
-  const payload = jwt.verify(token, secretKey, { expiresIn: "30m" });
-  return payload;
+  try {
+    const payload = jwt.verify(token, secretKey);
+    return payload;
+  } catch (error) {
+    return null;
+  }
 }
 
 module.exports = {

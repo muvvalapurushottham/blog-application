@@ -44,7 +44,7 @@
 
       .btn {
         width: 100%;
-        padding: 12px;
+        padding: 10px;
         font-size: 1rem;
         font-weight: 500;
         border-radius: 6px;
@@ -89,7 +89,7 @@
     </style>
   </head>
   <body>
-    <%- include('./partials/navbar') %>
+    <%- include('./partials/navbar', { user: locals.user}) %>
     <div class="container mt-4">
       <h2 class="mb-4">Account Info</h2>
 

@@ -75,12 +75,28 @@ async function handleReadBlog(req, res) {
 
 async function handleComment(req, res) {
   try {
+    const { content, blogId } = req.body;
+
+    if (content.length < 4) {
+      return res.redirect(`/blog/${req.params.blogId}`);
+    }
     const comment = await Comment.create({
-      content: req.body.content,
-      blogId: req.params.blogId,
+      content: content,
+      blogId: blogId,
       createdBy: req.user._id,
     });
-    return res.redirect(`/blog/${req.params.blogId}`);
+    console.log(content, "content");
+
+    const blog = await Blog.findById(req.params.blogId).populate("createdBy");
+    const comments = await Comment.find({ blogId: req.params.blogId }).populate(
+      "createdBy"
+    );
+
+    res.render("blog", {
+      blog,
+      comments,
+      user: req.user,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

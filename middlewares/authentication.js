@@ -1,4 +1,5 @@
 const { validateUserToken } = require("../services/authentication");
+const { User } = require("../models/user");
 
 function checkForAuthenticationCookie(cookieName) {
   return (req, res, next) => {
@@ -13,9 +14,25 @@ function checkForAuthenticationCookie(cookieName) {
     try {
       const userPayload = validateUserToken(token);
 
-      req.user = userPayload;
-    } catch (error) {}
-    return next();
+      if (userPayload) {
+        User.findById(userPayload._id)
+          .then((user) => {
+            if (user) {
+              req.user = user;
+            }
+            next();
+          })
+          .catch((err) => {
+            console.error("Error fething user: ", err);
+            next();
+          });
+      } else {
+        next();
+      }
+    } catch (error) {
+      console.error("Token validation error:", error);
+      next();
+    }
   };
 }
 
