@@ -106,14 +106,13 @@ async function handleEditAccountInfo(req, res) {
 
     await user.save();
 
-    // Fetch the updated user info after saving
     const updatedUser = await User.findById(user._id);
     const allBlogs = await Blog.find({ createdBy: user._id }).sort({
       createdAt: -1,
     });
 
     return res.status(200).render("home", {
-      user: updatedUser, // use the updated user
+      user: updatedUser,
       blogs: allBlogs,
     });
   } catch (error) {
@@ -133,14 +132,13 @@ async function handleUserBlogInfo(req, res) {
       return res.status(400).send("Invalid User ID");
     }
 
-    // Fetch the updated user info to ensure it's fresh
     const user = await User.findById(req.user._id);
     const allBlogs = await Blog.find({ createdBy: user._id }).sort({
       createdAt: -1,
     });
 
     res.render("userBlogInfo", {
-      user, // use the updated user info
+      user,
       blogs: allBlogs,
     });
   } catch (error) {
