@@ -8,6 +8,10 @@
         background-color: #f8f9fa;
         font-size: 14px;
         color: #343a40;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
       }
 
       .blog-cover-img {
@@ -90,9 +94,10 @@
 
       button {
         padding: 10px 15px;
+        margin: 5px 10px;
         font-size: 1rem;
         font-weight: 500;
-        border-radius: 6px;
+        border-radius: 50px;
         background-color: #007bff;
         color: white;
         border: none;
@@ -100,8 +105,17 @@
         transition: background-color 0.3s ease-in-out;
       }
 
+      .update_delete_buttons {
+        display: flex;
+        justify-content: flex-end;
+      }
+
       button:hover {
         background-color: #0056b3;
+      }
+
+      .update_delete_buttons {
+        display: flex;
       }
 
       footer {
@@ -123,8 +137,23 @@
 
       <div class="blog-body"><%= blog.body %></div>
 
-      <button id="updateButton">Update Blog</button>
-      <button id="deleteButton" data-id="<%= blog._id %>">Delete Blog</button>
+      <div class="update_delete_buttons">
+        <button id="updateButton">Update Blog</button>
+        <form
+          action="/user/userBlog/delete/<%= blog._id %>"
+          method="post"
+          style="display: inline"
+        >
+          <button
+            type="submit"
+            id="deleteButton"
+            data-id="<%= blog._id %>"
+            onclick="confirmDelete(event, this)"
+          >
+            Delete Blog
+          </button>
+        </form>
+      </div>
     </div>
 
     <div class="form-container mt-5" id="edit-view" style="display: none">
@@ -175,30 +204,21 @@
           document.getElementById("read-view").style.display = "block";
         });
 
-      document
-        .getElementById("deleteButton")
-        .addEventListener("click", function () {
-          const blogId = this.getAttribute("data-id");
+      function confirmDelete(event, button) {
+        event.preventDefault();
 
-          if (confirm("Are you sure you want to delete this blog?")) {
-            fetch(`/user/userBlog/${blogId}`, {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-              }
-            }).then(response => {
-              if(response.ok) {
-                alert("Blo deleted successfully.");
-                window.location.reload();
-              } else{
-                alert("Error deleting blog.");
-              }
-            }).catch(error => {
-              console.error('Error:', error);
-              alert("An error occurred while deleting the blog.");
-            })
-          }
-        });
+        const blogId = button.getAttribute("data-id");
+        const userConfirmed = confirm(
+          "Are you sure you want to delete this blog?"
+        );
+
+        if (userConfirmed) {
+          const form = button.closest("form");
+          form.submit();
+        } else {
+          console.log("Blog deletion cancelled");
+        }
+      }
     </script>
   </body>
 </html>

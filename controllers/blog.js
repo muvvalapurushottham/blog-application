@@ -21,7 +21,8 @@ async function handleAddNewBlog(req, res) {
       user: req.user,
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error(`Error rendering addBlog page: ${error}`);
+    res.status(500).json({ message: "Server error. Please try again." });
   }
 }
 
@@ -30,8 +31,9 @@ async function handleAddBlog(req, res) {
     const { title, body } = req.body;
 
     if (!title || !body || !req.file) {
-      req.render("addBlog", {
+      return res.render("addBlog", {
         error: "All fields are required",
+        user: req.user,
       });
     }
 
@@ -41,11 +43,12 @@ async function handleAddBlog(req, res) {
       createdBy: req.user._id,
       coverImageUrl: `/uploads/${req.file.filename}`,
     });
+
     return res.redirect(`/blog/${blog._id}`);
   } catch (error) {
     console.error(`Error adding blog: ${error.message}`);
     return res.status(500).render("addBlog", {
-      error: "Error while adding blog, Please try again later",
+      error: "Error while adding blog, please try again later",
       user: req.user,
     });
   }
@@ -55,19 +58,29 @@ uploadMiddleware = upload.single("coverImage");
 
 async function handleReadBlog(req, res) {
   try {
-    const blog = await Blog.findById(req.params.id).populate("createdBy");
-    const comments = await Comment.find({ blogId: req.params.id }).populate(
-      "createdBy"
-    );
+    const { blogId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(blogId)) {
+      return res.redirect("/");
+    }
+
+    const blog = await Blog.findById(blogId).populate("createdBy");
+
+    if (!blog) {
+      return res.redirect("/");
+    }
+
+    const comments = await Comment.find({ blogId }).populate("createdBy");
+
     return res.render("blog", {
       user: req.user,
-      blog: blog,
-      comments: comments,
+      blog,
+      comments,
     });
   } catch (error) {
-    console.error(`Error while reading blog: error.message`);
+    console.error(`Error while reading blog: ${error}`);
     return res.status(500).render("blog", {
-      error: "Error while reading blog please try again later",
+      error: "Error while reading blog, please try again later",
       user: req.user,
     });
   }
@@ -75,30 +88,27 @@ async function handleReadBlog(req, res) {
 
 async function handleComment(req, res) {
   try {
-    const { content, blogId } = req.body;
+    const { content } = req.body;
+    const { blogId } = req.params;
 
-    if (content.length < 4) {
-      return res.redirect(`/blog/${req.params.blogId}`);
+    if (!mongoose.Types.ObjectId.isValid(blogId)) {
+      return res.redirect("/");
     }
-    const comment = await Comment.create({
-      content: content,
-      blogId: blogId,
+
+    if (!content || content.length < 4) {
+      return res.redirect(`/blog/${blogId}`);
+    }
+
+    await Comment.create({
+      content,
+      blogId,
       createdBy: req.user._id,
     });
-    console.log(content, "content");
 
-    const blog = await Blog.findById(req.params.blogId).populate("createdBy");
-    const comments = await Comment.find({ blogId: req.params.blogId }).populate(
-      "createdBy"
-    );
-
-    res.render("blog", {
-      blog,
-      comments,
-      user: req.user,
-    });
+    return res.redirect(`/blog/${blogId}`);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error(`Error while adding comment: ${error}`);
+    return res.status(400).json({ message: error.message });
   }
 }
 

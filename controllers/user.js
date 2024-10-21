@@ -2,9 +2,11 @@ const multer = require("multer");
 const path = require("path");
 const { User } = require("../models/user");
 const { Blog } = require("../models/blog");
+const Comment = require("../models/comment");
 const { error, log } = require("console");
+const { render } = require("ejs");
 
-const storage = multer.diskStorage({
+const profileStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, `./public/uploads/`);
   },
@@ -14,7 +16,19 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const uploadProfileImage = multer({ storage: profileStorage });
+
+const blogStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, `./public/uploads/`);
+  },
+  filename: function (req, file, cb) {
+    const fileName = `${Date.now()}-${file.originalname}`;
+    cb(null, fileName);
+  },
+});
+
+const uploadBlogImage = multer({ storage: blogStorage });
 
 async function handleSignin(req, res) {
   try {
@@ -54,7 +68,7 @@ async function handleCreateUser(req, res) {
 
     return res.status(201).redirect("/");
   } catch (error) {
-    console.error("Error creating user: ", error);
+    console.error(`Error creating user: ${error}`);
     return res.render("signup", {
       alert: "An error occurred while creating the user. Please try again.",
     });
@@ -74,6 +88,7 @@ async function handleUserLogin(req, res) {
     const token = await User.matchPasswordAndGenerateToken(email, password);
     res.cookie("token", token).redirect("/");
   } catch (error) {
+    console.error(`Error while signing user: ${error}`);
     return res.render("signin", {
       error: "Incorrect Email or Password",
     });
@@ -83,6 +98,8 @@ async function handleUserLogin(req, res) {
 async function handleAccountInfo(req, res) {
   res.render("accountInfo", { user: req.user });
 }
+
+uploadProfileImageMiddleware = uploadProfileImage.single("profileImage");
 
 async function handleEditAccountInfo(req, res) {
   try {
@@ -116,11 +133,10 @@ async function handleEditAccountInfo(req, res) {
       blogs: allBlogs,
     });
   } catch (error) {
+    console.error(`Error while updating user info: ${error}`);
     return res.status(500).json({ message: error.message });
   }
 }
-
-const uploadMiddleware = upload.single("profileImage");
 
 async function handleUserLogout(req, res) {
   res.clearCookie("token").redirect("/");
@@ -142,10 +158,12 @@ async function handleUserBlogInfo(req, res) {
       blogs: allBlogs,
     });
   } catch (error) {
-    console.error(error);
+    console.error(`Error while user logout: ${error}`);
     res.status(500).send("Error retrieving blogs");
   }
 }
+
+uploadBlogImageMiddleware = uploadBlogImage.single("coverImageUrl");
 
 async function handleUserBlog(req, res) {
   try {
@@ -155,7 +173,7 @@ async function handleUserBlog(req, res) {
       blog: blog,
     });
   } catch (error) {
-    console.error(`Error while reading blog: ${error.message}`);
+    console.error(`Error while reading blog: ${error}`);
     return res.status(500).render("blog", {
       error: "Error while reading blog please try again later",
       user: req.user,
@@ -166,10 +184,9 @@ async function handleUserBlog(req, res) {
 async function handleUserBlogUpdate(req, res) {
   try {
     const { title, body } = req.body;
-
     if (!title || !body) {
       return res.render("userBlog", {
-        error: "Title and body are required",
+        error: "Title and Body are required",
         blog: { title, body },
       });
     }
@@ -204,7 +221,7 @@ async function handleUserBlogUpdate(req, res) {
       blog: updatedBlog,
     });
   } catch (error) {
-    console.error(`Error updating blog: ${error.message}`);
+    console.error(`Error updating blog: ${error}`);
     return res.status(500).render("userBlog", {
       error: "Error while updating blog, please try again later",
       user: req.user,
@@ -218,13 +235,11 @@ async function handleUserBlogDelete(req, res) {
 
     const blog = await Blog.findByIdAndDelete(blogId);
 
-    if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
-    }
+    await Comment.findByIdAndDelete(blogId);
 
-    return res.status(200).json({ message: "Blog deleted successfully" });
+    return res.status(200).redirect("/user/userBlogInfo");
   } catch (error) {
-    console.error(`Error deleting blog: ${error.message}`);
+    console.error(`Error deleting blog: ${error}`);
     return res.status(500).json({ message: "Error deleting blog" });
   }
 }
@@ -237,7 +252,8 @@ module.exports = {
   handleUserLogout,
   handleAccountInfo,
   handleEditAccountInfo,
-  uploadMiddleware,
+  uploadProfileImageMiddleware,
+  uploadBlogImageMiddleware,
   handleUserBlogInfo,
   handleUserBlog,
   handleUserBlogUpdate,

@@ -16,6 +16,7 @@ const {
   checkForAuthenticationCookie,
 } = require("./middlewares/authentication");
 const { TokenExpiredError } = require("jsonwebtoken");
+const { error } = require("console");
 
 //set view
 app.set("view engine", "ejs");
