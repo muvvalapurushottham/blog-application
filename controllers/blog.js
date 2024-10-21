@@ -58,7 +58,7 @@ uploadMiddleware = upload.single("coverImage");
 
 async function handleReadBlog(req, res) {
   try {
-    const { blogId } = req.params;
+    const blogId = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(blogId)) {
       return res.redirect("/");
